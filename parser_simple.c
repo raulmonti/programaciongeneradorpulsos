@@ -11,17 +11,18 @@ bstring expect(Lexer *l, char* token);
 /* Partes de un programa */
 bool program(Lexer *l);
 
+
+
 /* Obtener el siguiente simbolo (palabra reservada) */
 bstring getsym(Lexer *l){
 
   /* PRE */
   assert(l != NULL);
     
-  lexer_skip_to(l, "d" "p" "e" "--");
+  lexer_skip_to(l, "d" "p" "e" "--" );
   lexer_next(l, "d" "p" "e" "--");
   
   return lexer_item(l);
-
 }
 
 
@@ -34,7 +35,6 @@ bstring expect(Lexer *l, char* token){
   lexer_next(l, token);
 
   return lexer_item(l);
-
 }
 
 
@@ -89,7 +89,6 @@ bool program(Lexer *l){
       printf("Se leyó el comentario: %s\n", delay_id->data);
     }
     
-  
   sym = getsym(l);
   }
 
@@ -111,7 +110,8 @@ int main(void){
   
   
   /* Inicio de parseo */
-  program(l);
+  if (program(l)) printf("\nSintacticamente correcto\n");
+  else printf("Errores de sintaxis\n");
 
 
 

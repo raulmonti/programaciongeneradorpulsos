@@ -1,8 +1,17 @@
-p2(89)    --Este es un comentario
+p2(89)    
 d3
-p1(78)    --Este es otro comentario
+p7(78)    --Este es otro comentario
 d4
 d9
 
-e
+
+p3(99)
+
+p77(69)
+-- Deberia fallar en lo siguiente PERO NO FALLA
+p34(5)
+
+p(6)
+
+e         --Fin del programa
 
