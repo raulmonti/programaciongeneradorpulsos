@@ -12,7 +12,6 @@ bstring expect(Lexer *l, char* token);
 bool program(Lexer *l);
 
 
-
 /* Obtener el siguiente simbolo (palabra reservada) */
 bstring getsym(Lexer *l){
 
