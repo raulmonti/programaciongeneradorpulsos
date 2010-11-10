@@ -1,17 +1,3 @@
-p2(89)    
-d3
-p7(78)    --Este es otro comentario
-d4
-d9
-
-
-p3(99)
-
-p77(69)
-
-p34(5)
-
-p(6)
-
-e         --Fin del programa
-
+begin of phases            
+ph123            = 78 98 123 654 81 51
+end of phases
