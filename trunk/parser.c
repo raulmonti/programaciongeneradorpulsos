@@ -14,7 +14,7 @@
 /* Leer: "begin <space>+ of <space>+ phases <space>+ <newline>" */
 bool read_begin_of_phase(Lexer *l);
 
-/* Leer: "ph<digit> <space>+ = <space>+ <digit> {, <digit>} <space>+ <newline>" */
+/* Leer: "ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>+ <newline>" */
 bool read_phase(Lexer *l);
 
 
