@@ -11,7 +11,7 @@
 
 
 
-/* Leer: "begin <space>+ of <space>+ phases <space>+ <newline>" */
+/* Leer: "begin <space>+ of <space>+ phases <space>+ <newline>+" */
 bool read_begin_of_phase(Lexer *l);
 
 /* Leer: "ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>+ <newline>" */
@@ -92,6 +92,7 @@ bool read_begin_of_phase(Lexer *l){
 
     bool result = 1;
     
+    consume_spaces(l);
     result = accept(l, BEGIN);
     if (!result){
         printf("Se esperaba <begin>\n");
@@ -115,11 +116,14 @@ bool read_begin_of_phase(Lexer *l){
     }
     
     if (result){
+        bstring newlines = NULL;
         consume_spaces(l);
-        if (!accept(l, NEWLINE)){
-            printf("Se esperaba <newline>");
-            result = 0;
+        newlines = expect(l, NEWLINE);
+        if (biseqcstr(newlines, "")){
+        	printf("Se esperaba <newline>");
+        	result = 0;
         }
+        bdestroy(newlines);
     }
     
     return result;
@@ -155,6 +159,8 @@ bool read_phase(Lexer *l){
     
     if (result){
         bstring pulse_value = NULL;
+        bstring newlines = NULL;
+        bool endline = false;
         
         do {
             consume_spaces(l);
@@ -166,13 +172,19 @@ bool read_phase(Lexer *l){
             printf("Se leyó el pulse_value: %s\n", pulse_value-> data);
             bdestroy(pulse_value);
             consume_spaces(l);
-        }while(result != 0 && !accept(l, "\n"));
+            newlines = expect(l, NEWLINE);
+            endline = !biseqcstr(newlines, "");
+            bdestroy(newlines);
+            if (result != 0 && endline){
+            	/* Si leí al menos un pulsevalue y llegué al NEWLINE entonces es correcto */
+            	result = 1;
+            	break;
+            }
+        }while(result != 0);
     
     }
-    
-    
+
     return result;
-    
     
 }
 
