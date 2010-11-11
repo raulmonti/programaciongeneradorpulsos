@@ -15,19 +15,27 @@
  */
 
 
-/* DECLARACIÓN DE FASES: */
+/* DECLARACIÓN DE FASES:
+ *
+ * Sintaxis:
+ * phase_declaration = A <B>* C
+ * A = begin <space>+ of <space>+ phases <space>* <newline>+
+ * B = ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>* <newline>+
+ * C = end <space>+ of <space>+ phases <space>* <newline>+
+ *
+ */
 
-/* Leer: "begin <space>+ of <space>+ phases <space>* <newline>+" */
+bool phase_declaration(Lexer *l);
+
 bool read_begin_of_phase(Lexer *l);
-
-/* Leer: "ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>* <newline>+" */
 bool read_phase(Lexer *l);
+bool read_end_of_phase(Lexer *l); /** Redundacia entre éstas dos últimas funciones, mejorar **/
 
-/* Leer: "end <space>+ of <space>+ phases <space>* <newline>+" */
-bool read_end_of_phase(Lexer *l);
-/** Redundacia entre éstas dos últimas funciones, mejorar **/
-
-
+/* HOJA DE PULSOS: 
+ * 
+ * Sintaxis:
+ *
+ */
 
 
 /* Funciones auxiliares */
@@ -41,7 +49,7 @@ bool accept(Lexer *l, char* token);
 
 /* Sintaxis un programa */
 bool program(Lexer *l);
-bool phase_declaration(Lexer *l);
+
 
 
 /* Obtener el siguiente simbolo (palabra reservada) */
@@ -271,6 +279,8 @@ bool phase_declaration(Lexer *l){
 	result = read_begin && read_end;
 	return result;
 }
+
+
 
 
 
