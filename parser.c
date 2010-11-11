@@ -9,14 +9,23 @@
 #define RPAR    ")"
 #define EQL     "="
 
+/* La notación: 
+ * <token>+ : la ocurrencia de al menos una palabra <token> 
+ * <token>* : 0 o mas ocurrencia de la palabra <token>
+ */
 
 
-/* Leer: "begin <space>+ of <space>+ phases <space>+ <newline>+" */
+/* DECLARACIÓN DE FASES: */
+
+/* Leer: "begin <space>+ of <space>+ phases <space>* <newline>+" */
 bool read_begin_of_phase(Lexer *l);
 
-/* Leer: "ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>+ <newline>" */
+/* Leer: "ph<digit> <space>+ = <space>+ <digit> {<space>+ <digit>} <space>* <newline>+" */
 bool read_phase(Lexer *l);
 
+/* Leer: "end <space>+ of <space>+ phases <space>* <newline>+" */
+bool read_end_of_phase(Lexer *l);
+/** Redundacia entre éstas dos últimas funciones, mejorar **/
 
 
 
@@ -126,6 +135,52 @@ bool read_begin_of_phase(Lexer *l){
         bdestroy(newlines);
     }
     
+    if (result)    printf("begin of phases: Correcto\n");
+    return result;
+}
+
+bool read_end_of_phase(Lexer *l){
+#define END  "end"
+#define OF     "of"
+#define PHASES "phases"
+
+    bool result = 1;
+    
+    consume_spaces(l);
+    result = accept(l, END);
+    if (!result){
+        printf("Se esperaba <end>\n");
+        result = 0;
+    }
+    
+    if (result){
+        consume_spaces(l);
+        if (!accept(l, OF)){
+            printf("Se esperaba <of>");
+            result = 0;
+        }
+    }
+    
+    if (result){
+        consume_spaces(l);
+        if (!accept(l, PHASES)){
+            printf("Se esperaba <phases>");
+            result = 0;
+        }
+    }
+    
+    if (result){
+        bstring newlines = NULL;
+        consume_spaces(l);
+        newlines = expect(l, NEWLINE);
+        if (biseqcstr(newlines, "")){
+        	printf("Se esperaba <newline>");
+        	result = 0;
+        }
+        bdestroy(newlines);
+    }
+    
+    if (result)    printf("end of phases: Correcto\n");    
     return result;
 }
 
@@ -135,6 +190,7 @@ bool read_phase(Lexer *l){
     bool result = 0;
     
     result = accept(l, PH);
+    
     if (result){
         bstring pulse_id = NULL;
         
@@ -184,6 +240,7 @@ bool read_phase(Lexer *l){
     
     }
 
+    if (result)    printf("phases: Correcto\n");
     return result;
     
 }
@@ -191,142 +248,28 @@ bool read_phase(Lexer *l){
 
 
 bool phase_declaration(Lexer *l){
-#define BEGIN  "begin"
-#define OF     "of"
-#define PHASES "phases"
-    
-    
-    bool result = 1;
-    bstring sym = NULL;
-    
-    /* PRE: */
-    assert(l != NULL);
-    
-    
-    /* Parseo de "begin of phases\n" MODULARIZAR!!! */
-    sym = getsym(l);
-    if (!biseqcstr(sym, BEGIN)){
-        printf("Se esperaba <begin>\n");
-        result = 0;
-    }
-    bdestroy(sym);
-    
-    if (result){
-        bstring spaces = NULL;
-        
-        spaces = expect(l, SPACE);
-        if (biseqcstr(spaces, "")){
-            printf("Se esperaba <space>\n");
-            result = 0;
-        }
-        bdestroy(spaces);
-    }
-    
-    if (result){
-        bstring of = NULL;
-        
-        of = getsym(l);
-        if (!biseqcstr(of, OF)){
-            printf("Se esperaba <of>\n");
-            result = 0;
-        }
-        bdestroy(of);
-    }
-    
-    if (result){
-        bstring spaces = NULL;
-        
-        spaces = expect(l, SPACE);
-        if (biseqcstr(spaces, "")){
-            printf("Se esperaba <space>\n");
-            result = 0;
-        }
-        bdestroy(spaces);
-    }
-    
-    if (result){
-        bstring phases = NULL;
-        
-        phases = getsym(l);
-        if (!biseqcstr(phases, PHASES)){
-            printf("Se esperaba <phases>\n");
-            result = 0;
-        }
-        bdestroy(phases);
-    }
-    
-    if (result){
-        bstring spaces = NULL;
-        
-        spaces = expect(l, SPACE);
-        /* Consumir espacios */
-        bdestroy(spaces);
-    }
-    
-    if (result){
-        bstring newline = NULL;
-        
-        newline = expect(l, NEWLINE);
-        if (!biseqcstr(newline, NEWLINE)){
-            printf("Se esperaba <newline>\n");
-            result = 0;
-        }
-        bdestroy(newline);
-    }
-    
-    /* Parseo de phases: ph<digit> = <digit> {, <digit>} '\n' */
-    sym = getsym(l);
-    if (!biseqcstr(sym, "ph")){
-        printf("Se esperaba <ph>\n");
-        result = 0;
-    }
-    bdestroy(sym);
-    
-    if (result){
-        bstring pulse_id = NULL;
-        
-        pulse_id = expect(l, DIGIT);
-        if (biseqcstr(pulse_id, "")){
-            printf("Se esperaba <pulse_id>\n");
-            result = 0;
-        }
-        bdestroy(pulse_id);
-        consume_spaces(l);
-    }
-    
-    if (result){
-        bstring eql = NULL;
-        
-        eql = expect(l, EQL);
-        if (!biseqcstr(eql, EQL)){
-            printf("Se esperaba < = >\n");
-            result = 0;
-        }
-        bdestroy(eql);
-        consume_spaces(l);
-    }
-    
-    if (result){
-        bstring phase = NULL;
-        do {
-            phase = expect(l, DIGIT);
-            if (biseqcstr(phase, "")){
-                printf("Se esperaba < phase_number >\n");
-                result = 0;
-            }
-            printf("Fase leida: %s\n", phase->data);
-            bdestroy(phase);
-            consume_spaces(l);
-        }while (result != 0 && !accept(l, "\n"));
-        
-    }
-    
-    
-    
-    
-    
-    return result;
+	bool read_begin = 1;	
+	bool read_phases = 1;
+	bool read_end = 1;
+	bool result = 1;
+	
+	read_begin = read_begin_of_phase(l);
+	if (!read_begin){
+		result = 0;
+	}
+	
+	if (result){
 
+		do{
+			read_phases = read_phase(l);
+		}while(read_phases == 1);
+		
+	}
+	
+	read_end = read_end_of_phase(l);
+	
+	result = read_begin && read_end;
+	return result;
 }
 
 
@@ -347,17 +290,12 @@ int main(void){
   
   
   /* Inicio de parseo */
-  if (read_begin_of_phase(l)){
-    printf("Sintacticamente correcto BEGIN OF PHASES\n");
-  }else{
-    printf("Sintacticamente INcorrecto BEGIN OF PHASES\n");
-  }
+  if (phase_declaration(l)){
+  		printf("Correctamente sintactico\n");
+  	}else{
+  		printf("Incorrectamente sintactico\n");
+  	}
   
-  if (read_phase(l)){
-    printf("Sintacticamente correcto PHASES\n");
-  }else{
-    printf("Sintacticamente INcorrecto PHASES\n");
-  }
 
 
 
