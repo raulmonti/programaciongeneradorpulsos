@@ -1,0 +1,2 @@
+instruction.o: instruction.c instruction.h
+test_instruction.o: test_instruction.c instruction.h
