@@ -182,7 +182,7 @@ bool program(Lexer *l){
 	}
 	
 	sym = getsym(l);
-	while (!biseqcstr(sym, "end_program")) {
+	while (result && !biseqcstr(sym, "end_program")) {
 		if(result){
 			
 			if (biseqcstr(sym, "p")){
@@ -234,12 +234,12 @@ bool program(Lexer *l){
 		
 				if(result){
 					bstring newline = NULL;
+                    consume_spaces(l);
 					newline = expect(l, "\n");
 					if (biseqcstr(newline, "")){
 						result = 0;
 						printf("Se esperaba <newline>");
 					}
-/* 					sym = getsym(l);*/
 				}
 			}
 	
@@ -260,19 +260,16 @@ bool program(Lexer *l){
 						result = 0;
 						printf("Se esperaba <newline>");
 				}
-/*                if (result){
-                   sym = getsym(l);
-                }*/
+           }
+
+           if (!biseqcstr(sym, "d") && !biseqcstr(sym, "p")){
+             result = 0; 
+             printf("Simbolo no reconocido\n");
            }
 
 		}
     sym = getsym(l);
 	}
-	
-	
-	
-	
-	
 
 	return result;
 }
