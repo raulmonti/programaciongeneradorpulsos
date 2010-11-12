@@ -1,11 +1,11 @@
-declare_phases 
+declare_phases
   ph98 = 54 45 65 77
   ph98 = 954 945 965 977
 end_phases
 
 program
-  p2(ph32)
-  p4(ph3)
+  d1
+  p1(ph89)
 end_program
 
 
