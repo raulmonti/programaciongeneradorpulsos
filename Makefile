@@ -6,6 +6,7 @@ SOURCES=$(shell echo *.c)
 BSTRING_OBJECTS=bstring/bstrlib.o
 OBJECTS=$(SOURCES:.c=.o)
 
+
 all: $(TARGET)
 
 # BString requiere flags distintos:
